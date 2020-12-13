@@ -50,8 +50,8 @@ def affichage3():
     score=len(list(mot))*1000#initialisation du score du joueur
     
     
-score=0
-record=0
+score=0#initisalition score
+record=0#initisalition score
 def verif_lettre():
     global k, A1, A2, m, d, score, e
     n=Lettre.get()#on récupère la lettre proposée par le joueur
@@ -142,11 +142,11 @@ def rejouer():
      else:
          info.set("veuillez d'abord jouer une partie avant d'en relancer une")
             
-def indice():
-    
-    if d==True:
-        ind=rd.choice(list(mot))
-        if ind not in A1 :
+def indice():   
+    """Cette fonction renvoie un indice lorsque le joueur est bloqué."""
+    if d==True:#verifie qu'une partie est en cours
+        ind=rd.choice(list(mot))#tir une lettre du mot à deviner au hasard
+        if ind not in A1 :#verifie que l'indice n'a pas déjà était trouvé
             Lettre.set(ind)
             pendu()
     elif c==False and d==False:
