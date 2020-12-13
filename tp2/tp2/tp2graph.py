@@ -8,13 +8,12 @@ Created on Mon Dec  7 16:43:15 2020
 """Ce programme a pour but de créer la version graphique du jeu du êndu. 
 Il a été réalisé le 7 Décembre 2020 par Jordan Brassac"""
 import random as rd
-from tkinter  import Tk, PhotoImage, Canvas, Button,Label
-from tkinter import *
+from tkinter  import Tk, PhotoImage, Canvas, Button,Label, StringVar,Entry
+
 
 def mot_au_hasard(data):
     """Dans cette fonction on donne en entréé notre liste de mot et on récupère en sortie un mot tiré au
     hasard dans la liste"""
-    global mot1
     mot1=rd.choice(data)
     return mot1
     
@@ -36,33 +35,54 @@ def creation_liste(nom):
     return L
 
 def affichage3():
-    """Cette fonction reçoit un mot en entrée et renvoie en sortie le même mot mais remplaçant toutes 
-    les lettres du mot par des "_" sauf la première."""
+    """Cette fonction permet de renvoyer le mot à deviner mais en remplaçant les lettres du mot par des "_" sauf la première."""
     #cette variable doit être global car elle doit être conservée tout au long de la partie
-    nom="tp2"
+    global mot, A, A1, k, m, score
+    nom="tp2"#fichier contenant les mots à deviner
     L=creation_liste(nom)
-    mot=mot_au_hasard(L)
+    mot=mot_au_hasard(L)#tirage du mot à deviner
     n=len(mot)
-    x.set(mot[0]+(n-1)*"_")
-    return(mot[0]+(n-1)*"_")
-    
-    
-def verif_lettre():
-    global k
-    n=Lettre.get()
-    k=8
-    A=affichage3("tp2")
+    A=mot[0]+(n-1)*"_"#création de l'affichage souhaitée
+    x.set(A)#affichage  de A sur la fenêtre
     A1=list(A)
-    L1=list(mot1)
-    m=len(list(mot1))-1
-       
-    if n not in L1 and m!=0 :
-        k=k-1
-        
-        if k>1:  
-            resultat.set("Faux ! Il vous reste "+str(k)+" chances")
-        elif k==1:#question de grammaire
-            resultat.set("Faux ! Il vous reste "+str(k)+" chance")
+    k=7#initialisation de notre compteur de chances
+    m=len(list(mot))-1#initialisation de notre compteur de lettres justes
+    score=len(list(mot))*1000#initialisation du score du joueur
+    
+    
+score=0
+record=0
+def verif_lettre():
+    global k, A1, A2, m, d, score, e
+    n=Lettre.get()#on récupère la lettre proposée par le joueur
+    L1=list(mot)
+    Lettre.set("")
+    if n not in L1 and m!=0 :#si la lettre est dans le mot et que ce n'était pas la dernière à trouver
+        k=k-1#actualisation de notre compteur chance
+        if k==1:  
+            resultat.set("Faux ! Il vous reste "+str(k)+" chance")#affichage des chances qu'il restent au joueur 
+            item=canevas.create_image(150,150,image=image7)#affichage de l'image correspondante aux chances qu'il restent au joueur
+            score=int(score-(score/9)*(8-k))
+        elif k==2:
+            resultat.set("Faux ! Il vous reste "+str(k)+" chances")#affichage des chances qu'il restent au joueur
+            item=canevas.create_image(150,150,image=image6)#affichage de l'image correspondante aux chances qu'il restent au joueur
+            score=int(score-(score/9)*(8-k))
+        elif k==3:#question de grammaire
+            resultat.set("Faux ! Il vous reste "+str(k)+" chances")#affichage des chances qu'il restent au joueur
+            item=canevas.create_image(150,150,image=image5)#affichage de l'image correspondante aux chances qu'il restent au joueur
+            score=int(score-(score/9)*(8-k))
+        elif k==4:#question de grammaire
+            resultat.set("Faux ! Il vous reste "+str(k)+" chances")#affichage des chances qu'il restent au joueur
+            item=canevas.create_image(150,150,image=image4)#affichage de l'image correspondante aux chances qu'il restent au joueur
+            score=int(score-(score/9)*(8-k))
+        elif k==5:#question de grammaire
+            resultat.set("Faux ! Il vous reste "+str(k)+" chances")#affichage des chances qu'il restent au joueur
+            item=canevas.create_image(150,150,image=image3)#affichage de l'image correspondante aux chances qu'il restent au joueur
+            score=int(score-(score/9)*(8-k))
+        elif k==6:#question de grammaire
+            resultat.set("Faux ! Il vous reste "+str(k)+" chances")#affichage des chances qu'il restent au joueur
+            item=canevas.create_image(150,150,image=image2)#affichage de l'image correspondante aux chances qu'il restent au joueur   
+            score=int(score-(score/9)*(8-k))
     elif n in L1 and m>0:#si la lettre du joueur est dans le mot
         p=[indice for indice, valeur in enumerate(L1) if valeur==n]#donne les indices doù se trouvent les lettres correctes dans le mot
         if n not in A1:#on vérifie que la lettre n'a pas déja était trouvé
@@ -70,23 +90,75 @@ def verif_lettre():
             for i in p:
                 A1[i]=n#on remplace les "_" par les lettres justes trouvées par le joueur
             A2=''.join(A1)
-            x.set(A2)
-            resultat.set("Vrai !")
+            x.set(A2)#actualisation de l'affichage des lettres à trouver  
+            resultat.set("Vrai !")#affichage si la lettre proposée par le joueur est dans le mot
         else:
-            resultat.set("Lettre déjà trouvé !")
+            resultat.set("Lettre déjà trouvé !")#affichage si la lettre proposée par le joueur est dans le mot mais qu'elle a déjà était découverte
     if m<=0:
-        resultat.set("Felicitations, vous avez gagné !")
-        
-    else:
-        resultat.set("Dommage, vous avez perdu.")
-    
-    
+        resultat.set("Felicitations, vous avez gagné !")#affichage quand le joueur gagne la partie
+        d=False#permet de dire que la partie est finie
+        e=True#permet de dire qu'une partie a déjà était joué
+        if score> record:
+            info.set("Nouveau Record !!! Vous avez fait "+str(score)+" points")
+            record1.set("Record actuel: "+str(score))
+        else:
+            info.set("Vous avez fait "+str(score)+" points")
+    elif k==0:
+        resultat.set("Dommage, vous avez perdu.")#affichage quand le joueur perd la partie
+        score =0
+        d=False#permet de dire que la partie est finie
+        e=True#permet de dire qu'une partie a déjà était joué
+        item=canevas.create_image(150,150,image=image8)#affichage de l'image correspondante à la défaite du joueur
 
-        
-        
+c=False #variable qui vérifie si le mot à deviner est affiché  
+d=False #variable qui vérifie si le jeu est fini
+e=False #variable qui verifie que l'on puisse relancer une partie seulement si on en a déjà lancé une juste avant
+
+def pendu():
+    """Cette fonction permet d'effectuer une partie de pendu lorsque l'utilisateur clique sur proposer."""
+    global c,d,e 
+    info.set("")#verification que la variable info soit vide
+    if c==False:#verification que le mot à trouver (avec les lettres cachées) a déjà était montré au joueur
+        affichage3()
+        c=True
+        d=True
+    elif d==True:#verification que la partie continue
+        verif_lettre()
+    elif e==True:#verification si le joueur a déjà jouer une partie juste avant
+        x.set("")
+        info.set("Partie terminé, cliquez sur rejouer, si vous voulez recommencer une faire partie !")
+    
+def rejouer():
+     """Cette fonction permet de relancer une partie de pendu lorsque l'utilisateur clique sur rejouer, si une partie a déjà 
+     été jouer juste avant."""
+     global c,d,e
+     resultat.set("")
+     c=False #réinitialisations des variables
+     d=False #réinitialisations des variables
+     if e==True:#si l'utilisateur a déjà jouer une partie juste avant
+         info.set("")
+         item=canevas.create_image(150,150,image=image1)#on remet la première image
+         pendu()#on relance le jeu
+     else:
+         info.set("veuillez d'abord jouer une partie avant d'en relancer une")
+            
+def indice():
+    
+    if d==True:
+        ind=rd.choice(list(mot))
+        if ind not in A1 :
+            Lettre.set(ind)
+            pendu()
+    elif c==False and d==False:
+        info.set("Vous devez d'abord lancer une partie avant de demander un indice.")
+    else:
+        indice()
+    
+#création fenetre        
 fenetre=Tk()
 fenetre.title("Jeu du pendu")
 
+#chargement image
 image1=PhotoImage(file='bonhomme1.gif')
 image2=PhotoImage(file='bonhomme2.gif')
 image3=PhotoImage(file='bonhomme3.gif')
@@ -97,33 +169,49 @@ image7=PhotoImage(file='bonhomme7.gif')
 image8=PhotoImage(file='bonhomme8.gif')
 
 
+
+
+#affichage image
 canevas=Canvas(fenetre,width=300,height=300)
 item=canevas.create_image(150,150,image=image1)
-canevas.pack()
-x=StringVar()
 
-boutonproposer=Button(fenetre,text='Proposer',command=affichage3)
+
+
+#création bouton
+boutonrejouer=Button(fenetre,text='Rejouer',command=rejouer)
 boutonquitter=Button(fenetre,text='Quitter',command=fenetre.destroy)
-boutonproposer.pack(side='left',padx=10,pady=10)
-boutonquitter.pack(side='left',padx=10,pady=10)
+boutonproposer=Button(fenetre,text='Proposer',command=pendu)
+boutonindice=Button(fenetre,text='Indice',command=indice)
 
-texteLabel1 = Label(fenetre, textvariable = x,bg='white')
-texteLabel1.pack()
-
+#variable contenant du texte qui devra s'afficher sur la fenêtre pendant le programme
+x=StringVar()
 mot=StringVar()
 resultat=StringVar()
 Lettre=StringVar()
+info=StringVar()
+record1=StringVar()
 
+#création du champ de saisie
 champ=Entry(fenetre,textvariable=Lettre)
 champ.focus_set()
-champ.pack(side='left',padx=10,pady=10)
-bout_3=Button(fenetre,text='Entrer',command=verif_lettre)
-bout_3.pack(side="left")
 
-texteLabel1 = Label(fenetre, textvariable = resultat,bg='white')
-texteLabel1.pack()
 
-texteLabel2 = Label(fenetre, textvariable = x,bg='white')
-texteLabel2.pack()
+#création des zones d'affichage de texte
+texteLabel1 = Label(fenetre, textvariable = x,bg='white', padx=10 , pady=10 )
+texteLabel2 = Label(fenetre, textvariable = resultat,bg='white', padx=10 , pady=10)
+texteLabel3 = Label(fenetre, textvariable = info,bg='white', padx=10 , pady=10)
+texteLabel4 = Label(fenetre, textvariable = record1,bg='white', padx=10 , pady=10)
+
+#mise en place des élèments sur la fenêtre
+champ.grid(row=1, column=2)
+boutonrejouer.grid(row=2, column=1)
+boutonquitter.grid(row=3, column=1)
+boutonproposer.grid(row=1, column=1)
+boutonindice.grid(row=1,column=3)
+texteLabel1.grid(row=4, sticky='NE')
+texteLabel2.grid(row=5)
+texteLabel3.grid(row=6)
+texteLabel4.grid(row=7)
+canevas.grid(column=4, row=7)
 
 fenetre.mainloop()
